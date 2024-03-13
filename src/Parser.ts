@@ -174,16 +174,20 @@ export default class Parser {
                 case tokenTypeList.divide.name:
                     return this.run(node.leftNode) / this.run(node.rightNode);
                 case tokenTypeList.plus.name:
-                    const leftValue = this.run(node.leftNode);
-                    const rightValue = this.run(node.rightNode);
+                    let leftValue = this.run(node.leftNode);
+                    let rightValue = this.run(node.rightNode);
                     if (typeof leftValue === 'string' && typeof rightValue === 'string') {
-                        const trimmedLeft = leftValue.slice(0, -1);
-                        const trimmedRight = rightValue.slice(1);
-                        return trimmedLeft + trimmedRight;
+                        leftValue = leftValue.slice(0, -1);
+                        rightValue = rightValue.slice(1);
 
-                    } else {
-                        return leftValue + rightValue;
+                    } else if (typeof leftValue === "string" && typeof rightValue !== "string") {
+                        leftValue = leftValue.slice(0, -1);
+                        rightValue = `${rightValue}\"`;
+                    } else if (typeof leftValue !== null && typeof rightValue === "string") {
+                        leftValue = `\"${leftValue}`;
+                        rightValue = rightValue.slice(1);
                     }
+                    return leftValue + rightValue;
                 case tokenTypeList.minus.name:
                     return this.run(node.leftNode) - this.run(node.rightNode);
                 case tokenTypeList.assign.name:
