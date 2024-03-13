@@ -9,10 +9,11 @@ export default class TokenType {
 }
 
 export const tokenTypeList = {
-    'int': new TokenType('int', '[0-9]*'),
+    'float': new TokenType('float', '[0-9]+\\.[0-9]+'),
+    'int': new TokenType('int', '[0-9]+'),
     'print': new TokenType('print', 'print'),
     'type': new TokenType('type', '(int|mixed|string)'),
-    'variable': new TokenType('variable', '[a-zA-Z]*'),
+    'variable': new TokenType('variable', '[a-zA-Z]+'),
     'semicolon': new TokenType('semicolon', ';'),
     'space': new TokenType('space', '[ \\n\\t\\r]'),
     'assign': new TokenType('assign', '='),

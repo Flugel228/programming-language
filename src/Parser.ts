@@ -7,6 +7,7 @@ import VariableNode from "./AST/VariableNode";
 import BinOperationNode from "./AST/BinOperationNode";
 import UnarOperationNode from "./AST/UnarOperationNode";
 import StringNode from "./AST/StringNode";
+import FloatNode from "./AST/FloatNode";
 
 export default class Parser {
     tokens: Token[];
@@ -37,7 +38,11 @@ export default class Parser {
         return token;
     }
 
-    parseVariableOrIntOrString(): ExpressionNode {
+    parseVariableOrIntOrFloatOrString(): ExpressionNode {
+        const float = this.match(tokenTypeList.float)
+        if (float !== null) {
+            return new FloatNode(float);
+        }
         const int = this.match(tokenTypeList.int);
         if (int !== null) {
             return new IntNode(int);
@@ -69,7 +74,7 @@ export default class Parser {
             this.require(tokenTypeList.rpar);
             return node;
         } else {
-            return this.parseVariableOrIntOrString();
+            return this.parseVariableOrIntOrFloatOrString();
         }
     }
 
@@ -125,7 +130,7 @@ export default class Parser {
             return this.parsePrint();
         }
         this.pos -= 1;
-        let variableNode = this.parseVariableOrIntOrString();
+        let variableNode = this.parseVariableOrIntOrFloatOrString();
         const assignOperator = this.match(tokenTypeList.assign);
         if (assignOperator !== null) {
             const rightFormulaNode = this.parseFormula();
@@ -146,6 +151,9 @@ export default class Parser {
     }
 
     run(node: ExpressionNode): any {
+        if (node instanceof FloatNode) {
+            return parseFloat(node.number.text)
+        }
         if (node instanceof IntNode) {
             return parseInt(node.number.text);
         }
